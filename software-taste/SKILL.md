@@ -42,6 +42,8 @@ Draw from these traditions when forming questions and observations:
 | Frontend architecture | Dan Abramov / React docs | Derive state during render; reach for an effect only to sync with something outside the component tree |
 | Frontend architecture | Rich Harris | Push reactivity to compile time; unnecessary default work compounds into unfixable death-by-a-thousand-cuts |
 | Frontend architecture | Adam Wathan | "Separation of concerns" is a dependency-direction choice (CSS-depends-on-HTML vs HTML-depends-on-CSS), not a binary virtue |
+| Frontend architecture | Evan You | Meet users where they are — progressive adoption and coexisting API styles over one forced on-ramp |
+| Frontend architecture | Anthony Fu (antfu) | Opinionated tooling trades control for consistency; check whether the escape hatch is a real lever or a binary bypass |
 
 ## When to Trigger
 

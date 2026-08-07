@@ -565,6 +565,46 @@ Source: [Extending Atomic Design](https://bradfrost.com/blog/post/extending-atom
 
 ---
 
+## 24. Evan You — The Progressive Framework
+
+**Core insight:** a framework spans use cases from "sprinkle interactivity on static HTML" to "full SSR application," and Vue is deliberately designed not to force every user onto the same on-ramp:
+
+> "The web is extremely diverse — the things we build on the web may vary drastically in form and scale. With that in mind, Vue is designed to be flexible and incrementally adoptable."
+
+> "If you are a veteran, you can pick the optimal way to leverage Vue based on the problems you are trying to solve, while retaining the same productivity. This is why we call Vue 'The Progressive Framework': it's a framework that can grow with you and adapt to your needs."
+
+**On offering two mental models without forking the system:** Vue ships both an Options API (object-based, familiar to developers from OOP/class backgrounds) and a Composition API (function-based, better for logic reuse), and is explicit that this is not two competing implementations bolted together:
+
+> "Both API styles are fully capable of covering common use cases. They are different interfaces powered by the exact same underlying system. In fact, the Options API is implemented on top of the Composition API!"
+
+The recommendation to choose one over the other is based on the user's background and the project's complexity (e.g., Options API for progressive enhancement without a build step; Composition API for full applications) — not a claim that one is objectively superior.
+
+**Design lens:** progressive disclosure of complexity is a legitimate API/SDK design goal distinct from "keep it simple" — it means offering more than one valid entry point matched to where different users already stand, while keeping one underlying source of truth so the paths don't diverge into two systems that happen to share a name.
+
+Source: [Vue.js docs — Introduction: The Progressive Framework](https://vuejs.org/guide/introduction.html); Evan You, "Seeking the Balance in Framework Design," JSConf.Asia 2019.
+
+---
+
+## 25. Anthony Fu (antfu) — Opinionated Tools and the "All-or-Nothing" Tradeoff
+
+**Core insight:** an opinionated tool buys consistency by removing configuration surface — that's a genuine, positive tradeoff — but the same rigidity becomes a wall the moment one specific case needs to differ, and the tool offers no proportionate way to express that difference.
+
+> "Opinionated essentially means it's not for everyone. Prettier makes a lot of hard-coded decisions to provide a minimal configuration interface. That makes it very easy to use (it's excellent!) and the code consistent across projects. However, on the other hand, it also means you are losing the ability to have fine-grained tweaks to how your code should look like."
+
+**On the escape hatch being binary, not granular:** the specific failure mode is not "I disagree with a default" — it's that disagreement has no proportionate fix:
+
+> "You can't disable it completely... The only workaround you can do is to use `// prettier-ignore`, which to me, the 'all or nothing' choice loses the point of using [the tool] in the first place."
+
+**On this not being a verdict against opinionated tools in general:**
+
+> "Different tools have different purposes and focuses, and there is no better or worse. It's just about using the right tools for the right circumstances."
+
+**Design lens:** when reviewing a tool, config system, or internal API's "opinionated defaults," ask two separate questions — what convenience does the rigidity buy, and when the one case you'll actually hit arrives, is the available escape hatch a real lever (a scoped config flag, a per-line directive with fallback) or a full bypass (disable the whole tool for the whole file)? A binary escape hatch means every future disagreement gets resolved by opting out entirely, which quietly erodes the consistency the tool was chosen for in the first place.
+
+Source: [Anthony Fu — Why I don't use Prettier](https://antfu.me/posts/why-not-prettier), 2022.
+
+---
+
 ## The 8 审查 Questions (Synthesis)
 
 When examining any piece of code, ask:
