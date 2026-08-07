@@ -605,6 +605,94 @@ Source: [Anthony Fu — Why I don't use Prettier](https://antfu.me/posts/why-not
 
 ---
 
+## 26. Eric Evans — Domain-Driven Design (Bounded Context & Ubiquitous Language)
+
+**Core insight:** large systems rarely fail for lack of a correct model — they fail because everyone assumes there's exactly one model spanning the whole system. Evans's fix is to draw an explicit boundary (a **Bounded Context** — typically a subsystem or a team's area of ownership) inside which one model and one vocabulary are guaranteed to be consistent. Outside that boundary, the same word ("Order," "Account") can and often should mean something different.
+
+**On the vocabulary itself being the design artifact:**
+
+> "To communicate effectively, the code must be based on the same language used to write the requirements — the same language that the developers speak with each other and with domain experts." "The vital detail about the design is captured in the code. A well-written implementation should be transparent, revealing the model underlying it."
+
+**On the language evolving with the model, not being frozen upfront:**
+
+> "Persistent use of the UBIQUITOUS LANGUAGE will force the model's weaknesses into the open. The team will experiment and find alternatives to awkward terms or combinations. As gaps are found in the language, new words will enter the discussion. These changes to the language will be recognized as changes in the domain model and will lead the team to update class diagrams and rename classes and methods in the code, or even change behavior, when the meaning of a term changes."
+
+**On distinctions as the core discipline:**
+
+> "Software design is a constant battle with complexity. We must make distinctions so that special handling is applied only where necessary." — the same instinct as Linus's "special cases go away," but applied at the level of model boundaries rather than control flow.
+
+**Design lens:** when a review surfaces the same word behaving differently in two parts of one codebase, that's not automatically a bug to unify — it may be evidence of two legitimate contexts that already need separate ownership and an explicit, deliberate translation at the boundary between them, rather than one model stretched to cover both.
+
+**Backend implication:** this repo's own rule that features never import other features — cross-feature communication goes through EventBus or a shared `core`/`repository` — is, in Evans's vocabulary, already an informal bounded-context discipline. What Evans adds is the explicit name for that boundary and the practice of letting each context's vocabulary evolve with its code instead of freezing it in an initial design document.
+
+Source: Eric Evans, *Domain-Driven Design: Tackling Complexity in the Heart of Software* (2003).
+
+---
+
+## 27. Martin Kleppmann — System of Record vs. Derived Data
+
+**Core insight:** explicitly tag every piece of data, per dataset, as either the authoritative fact (system of record) or a rebuildable projection of some other fact (derived data) — and treat losing each of those very differently.
+
+> "A system of record holds the authoritative version of your data. When new data comes in... it is first written here." "Derived data systems are the result of taking some existing data from another system and transforming or processing it in some way... If you lose derived data, you can re-create it from the original source. Denormalized values, indexes and materialized views are examples of derived data."
+
+**On this being a property of usage, not of the tool:**
+
+> "The distinction between system of record and derived data system depends not on the tool, but on how you use it in your application... Most databases, storage engines and query languages are not inherently a system of record or a derived system."
+
+**On the log as the more fundamental structure underneath both:**
+
+> "By separating mutable state from the immutable event log, you can derive several different read-oriented representations from the same log of events."
+
+**On the right emotional posture for distributed systems:** "We will now turn our pessimism to the maximum, and assume that anything that can go wrong will go wrong" — the practical corollary being that suspicion, pessimism, and paranoia about partial failure are the correct default, not an overreaction.
+
+**Design lens:** "if this table, cache, or index disappeared right now, could we rebuild it, and from what?" is a concrete review question distinct from the existing Data Model Lens's "Derivation" question — that one is about one table's relationship to other tables inside a single schema; this one is about system-wide architecture, where the event log (or equivalent authoritative source) is the one true history and every downstream database, cache, and search index is a replaceable, rebuildable view of it.
+
+**Backend implication:** for any table in this repo populated by an EventBus or RocketMQ consumer, ask directly — is this table authoritative, or a materialized view of the event stream; if the topic were replayed from the beginning, would this table need to exist in its current form at all?
+
+Source: Martin Kleppmann, *Designing Data-Intensive Applications* (O'Reilly, 2017), Part III "Derived Data" and Chapter 9 "The Trouble with Distributed Systems."
+
+---
+
+## 28. Michael Stonebraker — "One Size Does Not Fit All"
+
+**Core insight:** a general-purpose relational engine is general because it pays specific, nameable overhead on every operation to stay general — and a system willing to give up that generality can shed the overhead and run an order of magnitude faster for its specific workload.
+
+> "I believe that 'one size does not fit all'. I.e. in every vertical market I can think of, there is a way to beat legacy relational DBMSs by 1-2 orders of magnitude. The techniques used vary from market to market."
+
+**On naming exactly what a general-purpose engine pays for:**
+
+> "We identified 4 sources of significant OLTP overhead (concurrency control, write-ahead logging, latching and buffer pool management). Unless you make a big dent in ALL FOUR of these sources, you will not run dramatically faster than current disk-based RDBMSs."
+
+**Design lens:** "why is this in Postgres" is not a complete design question by itself — the sharper version is "what generality is this workload paying for that it doesn't need, and is there a specialized store that would trade away exactly that generality for a specific win." This doesn't argue for defaulting to specialized engines everywhere — that would just be a different dogma — it argues for treating "we already have Postgres, put it there" as a default that needs to be argued for, not assumed for free.
+
+**Backend implication:** this repo's own stack — Postgres for business data, Redis for cache/queues/locks, RocketMQ for events, OSS for blobs — is already, in practice, a Stonebraker-style specialization decision. This section gives explicit vocabulary for the next such decision: when a genuinely new kind of data shows up (time-series billing metrics, full-text search, vector embeddings), the question is which specific overhead that data's access pattern doesn't need to pay.
+
+Source: Michael Stonebraker, interview "One Size does not fit all," ODBMS.org / KDnuggets, 2012; Stonebraker et al., "Through the OLTP Looking Glass and What We Found There" (SIGMOD 2008).
+
+---
+
+## 29. Alex Russell — The Cost of JavaScript / The Performance Inequality Gap
+
+**Core insight:** every byte of JavaScript shipped to a browser costs real parse, compile, and execution time — and that cost must be measured against the device and network the actual user population has, not the developer's laptop or a flagship phone.
+
+> "HTML, CSS, images, and fonts can all be parsed and run at near wire speeds on low-end hardware, but JavaScript is at least three times more expensive, byte-for-byte."
+
+**On whose device the budget should be set by:**
+
+> "Devices within the envelope of our attention are 15-25% as fast as those carried by programmers and their bosses — even in wealthy markets." "Until and unless teams have better data about their audience, the global baseline budget should be enforced."
+
+**On the discipline this requires of the profession:**
+
+> "Frontend developers are cursed to program The Devil's Computer. Web apps execute on slow devices we don't spec or provision, on runtimes we can barely reason about... For the frontend to earn and keep its stripes as an engineering discipline, frontenders need to internalise the envelope of what's possible on most devices."
+
+**Design lens — why this is not a restatement of the existing Rich Harris section:** Harris's point is about a framework's internal cost model — diffing and reactivity overhead paid on every state update, independent of the network. Russell's point is the one-time-but-brutal cost of getting any JavaScript to the user's device and through its JS engine at all, dominated by device and network reality rather than framework choice. A team can pick the leanest framework available and still blow the budget by shipping too many bytes to a population that isn't using the developer's own hardware.
+
+**Frontend implication:** "did bundle size grow, and has it been checked against a realistic P75 device/network profile" is a concrete, Russell-grounded review question, distinct from and complementary to "is this code well-factored."
+
+Source: Alex Russell, "The Performance Inequality Gap" series, infrequently.org.
+
+---
+
 ## The 8 审查 Questions (Synthesis)
 
 When examining any piece of code, ask:

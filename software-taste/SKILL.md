@@ -23,6 +23,7 @@ Draw from these traditions when forming questions and observations:
 | Abstraction | Parnas | Module boundary = hidden design decision, not process step |
 | Abstraction | Ousterhout | Deep modules > shallow modules; simple interface > simple implementation |
 | Abstraction | Liskov/Guttag | Abstraction + specification = complexity control |
+| Abstraction | Eric Evans | Bounded context — a model's vocabulary is only guaranteed consistent within an explicit boundary, not enterprise-wide |
 | Complexity | Fred Brooks | Essential vs accidental complexity; no silver bullets |
 | Complexity | Rich Hickey | Simple != easy; complexity = things braided together |
 | Complexity | Google SRE | Reliability comes from simplicity; smaller API surface; fewer surprises |
@@ -32,6 +33,8 @@ Draw from these traditions when forming questions and observations:
 | Evolution | Spolsky | Abstractions leak; high-level doesn't replace low-level understanding |
 | Provenance | W3C PROV / GitHub Audit / CloudEvents | Keep entity, activity, actor, and occurrence context as independent dimensions |
 | Data modeling | Mux / Rails Active Storage / S3 / OneDrive / GitLab DB | Separate durable entities, operations, relationships, projections, and audit; store only facts this system owns |
+| Data architecture | Martin Kleppmann | System of record vs. derived data — know which data is authoritative and which is a rebuildable projection of the event log |
+| Data architecture | Michael Stonebraker | "One size does not fit all" — a general-purpose engine pays four nameable costs (concurrency control, WAL, latching, buffer pool) to stay general |
 | Philosophy | Unix | Small tools, composition, text interfaces, replaceable parts |
 | Philosophy | Worse is Better | Simple implementation + propagation > perfect architecture |
 | Philosophy | Carmack | Less state = easier reasoning; static analysis as quality culture |
@@ -44,6 +47,7 @@ Draw from these traditions when forming questions and observations:
 | Frontend architecture | Adam Wathan | "Separation of concerns" is a dependency-direction choice (CSS-depends-on-HTML vs HTML-depends-on-CSS), not a binary virtue |
 | Frontend architecture | Evan You | Meet users where they are — progressive adoption and coexisting API styles over one forced on-ramp |
 | Frontend architecture | Anthony Fu (antfu) | Opinionated tooling trades control for consistency; check whether the escape hatch is a real lever or a binary bypass |
+| Frontend architecture | Alex Russell | Every byte of JS has real parse/compile/execution cost on a median user device, not a developer's laptop |
 
 ## When to Trigger
 
