@@ -449,6 +449,122 @@ The review question is therefore not "Can this be done in two tables?" It is: "W
 
 ---
 
+## 18. Don Norman — The Design of Everyday Things
+
+**Core distinctions:**
+- **Affordance**: the possible relationship between a person and an object — a door affords pushing or pulling, regardless of whether that's signaled well.
+- **Signifier**: the perceivable signal that communicates an affordance — a flat plate signifies "push," a vertical handle signifies "pull." An affordance can exist without a signifier, and that's exactly when doors get gracelessly shoved or pointlessly pulled ("Norman doors").
+- **Conceptual model**: the mental model a person forms of how a system works, built from what the system shows them — not from the engineer's implementation model. When the two diverge, users misuse the system and blame themselves.
+- Constraints, mapping, and feedback complete the set: constraints narrow what actions are physically or logically possible; mapping is the relationship between controls and their effects; feedback confirms an action was received and what it did.
+
+**Key argument:** Good design does not need instructions. If a person needs a manual — or a tooltip, or a support ticket — to know how to operate an interface, the design has failed to signify its affordances. Confusion is a design defect, not a user error.
+
+> "The design of everyday things is in great danger of becoming the design of superfluous, overloaded, unnecessary things." — Don Norman
+
+**Frontend implication:** Every custom control reinvents affordance and signifier from scratch. A `<div onClick>` has no built-in signifier for "clickable," no keyboard affordance, no focus indication — all of that must be manually rebuilt and is easy to leave incomplete. Native elements (`<button>`, `<a>`, `<select>`) already encode the conceptual model most users share.
+
+Source: *The Design of Everyday Things*, Don Norman (revised edition, 2013).
+
+---
+
+## 19. Dan Abramov / React Core Team — Effects vs. Derived State
+
+**Core insight:** An Effect is an escape hatch for synchronizing with something *outside* React (a DOM API, a third-party widget, the network) — not a mechanism for reacting to your own component's state changes.
+
+> "Effects are an escape hatch from the React paradigm... If there is no external system involved... you shouldn't need an Effect. Removing unnecessary Effects will make your code easier to follow, faster to run, and less error-prone."
+
+**The rule for state:**
+
+> "When something can be calculated from the existing props or state, don't put it in state. Instead, calculate it during rendering."
+
+Storing `fullName` in state and syncing it from `firstName`/`lastName` via an Effect creates a redundant source of truth that can drift out of sync and forces an extra render pass. Deriving it inline (`const fullName = firstName + ' ' + lastName`) makes drift structurally impossible.
+
+**The rule for events vs. effects:**
+
+> "Ask yourself *why* this code needs to run... Use Effects only for code that should run *because* the component was displayed to the user." A notification caused by a button click belongs in the click handler, not in an Effect watching for the resulting state change — by the time the Effect runs, the specific interaction that caused it is already lost.
+
+**Lifting state up:** When two components need to stay synchronized, the fix is rarely "add an Effect to notify the other" — it's moving the state to their common owner so there is only one source of truth to keep consistent in the first place.
+
+Source: [react.dev — You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)
+
+---
+
+## 20. Rich Harris — Compile-Time Reactivity ("Virtual DOM is Pure Overhead")
+
+**Core argument:** The virtual DOM was never a performance feature — it's a means to a programming-model end (declarative, state-driven UI), purchased at the cost of a diff pass that a compiler could often skip entirely.
+
+> "It's important to understand that virtual DOM *isn't a feature*. It's a means to an end, the end being declarative, state-driven UI development."
+
+Where a runtime framework must diff the entire new virtual tree against the old one to find what changed, a compiler that knows the component's shape at build time can generate the update directly:
+
+> "Svelte is a compiler that knows at *build time* how things could change in your app, rather than waiting to do the work at *run time*."
+
+**On the danger of "fast enough" defaults:** Harris's sharper point isn't about diffing cost — it's that frameworks which make unnecessary recomputation the default (recreating arrays, closures, and elements on every render "just in case") accumulate overhead with no single bottleneck to target:
+
+> "The danger of defaulting to doing unnecessary work, even if that work is trivial, is that your app will eventually succumb to 'death by a thousand cuts' with no clear bottleneck to aim at once it's time to optimise."
+
+**Design lens:** This generalizes past Svelte vs. React. The question worth asking of any reactive system is *when* it decides what needs to update — at author time (explicit), at compile time (inferred statically), or at run time (diffed dynamically) — and what work that deferral costs on every single update thereafter.
+
+Source: [Svelte blog — Virtual DOM is pure overhead](https://svelte.dev/blog/virtual-dom-is-pure-overhead), Rich Harris, 2018.
+
+---
+
+## 21. Adam Wathan — CSS Utility Classes and "Separation of Concerns"
+
+**Core reframe:** "Separation of concerns" between HTML and CSS is usually treated as binary (you have it, or you're doing it wrong). Wathan argues the real variable is **dependency direction**, and there are two legitimate choices:
+
+> "There are two ways you can write HTML and CSS: **CSS that depends on HTML** [content-based class names like `.author-bio`, styled via selectors that mirror the markup] ... **HTML that depends on CSS** [content-agnostic utility classes like `.media-card`, composed directly in markup]."
+
+> "In this model, your HTML is restyleable, but your CSS is not reusable... In this model, your CSS is reusable, but your HTML is not restyleable. ... Neither is inherently 'wrong'; it's just a decision made based on what's more important to you in a specific context."
+
+**On why "semantic" naming quietly fails:** content-based classes (`.author-bio`, `.article-preview`) force either duplicated CSS or fragile `@extend` chains the moment two unrelated pieces of content need identical styling — the CSS ends up mirroring the HTML structure it was supposed to be decoupled from.
+
+**On premature abstraction:** the instinct to name and extract a CSS component for everything is itself a cost:
+
+> "Taking a component-first approach to CSS means you create components for things even if they will never get reused. This premature abstraction is the source of a lot of bloat and complexity in stylesheets." A navbar written once in one layout file has nothing worth extracting into `.navbar`.
+
+**On why blank canvases grow unbounded:** the deeper argument for constrained utilities over free-form CSS: "every line of new CSS is still an opportunity for new complexity; adding more CSS will never make your CSS simpler." He cites GitLab (402 unique text colors), Buffer, HelpScout, and Stripe production stylesheets as evidence of what happens when every developer can reach for an arbitrary new value instead of choosing from a constrained set.
+
+Source: [Adam Wathan — CSS Utility Classes and "Separation of Concerns"](https://adamwathan.me/css-utility-classes-and-separation-of-concerns/), 2017.
+
+---
+
+## 22. Heydon Pickering — Inclusive Components
+
+**Core insight:** most accessibility work is not building something new — it's *not throwing away* the semantics and behavior the platform already gives you for free.
+
+Native elements ship with built-in role, state, keyboard interaction, and focus handling that would otherwise have to be hand-rebuilt:
+
+> "[Buttons] come prepackaged with the 'button' role and are keyboard and screen reader accessible by default. Unlike some form elements, they are also trivial to style." A `<button>` responds to click, Space, Enter, and touch as standard — "where `<button>` elements are not used, these behaviors have to be emulated with bespoke scripting."
+
+**On correcting a common misconception:** the belief that rich, dynamic interactions are inherently inaccessible is false — the tooling supports it, engineering effort often just doesn't reach it:
+
+> "A popular misconception has been that screen readers *don't understand* JavaScript. Not only is this entirely untrue — all major screen readers react to changes in the DOM as they occur."
+
+**On state and labels — a concrete taste rule:** never change a control's accessible state and its visible label in the same interaction (e.g., a play/pause button). Changing both at once means an already-ambiguous transition (was "off" turned "on," or did the button just relabel itself?) becomes actively misleading to anyone not watching the pixel change happen.
+
+**Reframing who benefits:** accessibility features are not a minority carve-out — "supporting screen reader software is supporting screen reader software, not blind people. Screen readers are a tool a lot of different people like to use," including users with dyslexia, low literacy, or situational impairments (bright sunlight, one-handed use, noisy environments).
+
+**Design lens:** treat ARIA as a *progressive enhancement layer on top of* semantic HTML (e.g., `aria-pressed` added to a real `<button>`), not a replacement for semantics on a generic `<div>`. If you find yourself re-declaring role, keyboard handling, and focus management that a native element already provides, that's the signal you reached for the wrong base element.
+
+Source: [Inclusive Components — Toggle Buttons](https://inclusive-components.design/toggle-button/), Heydon Pickering.
+
+---
+
+## 23. Brad Frost — Atomic Design
+
+**Core insight:** the atoms/molecules/organisms hierarchy is a *mental model for composition*, not a taxonomy to defend. Frost is explicit that people who write in to "correct" his naming have missed the point:
+
+> "'Atomic design' as a buzzword encapsulates the concepts of modular design and development, which becomes a useful shorthand for convincing stakeholders and talking with colleagues. But atomic design is not rigid dogma." "Extending atomic design to fit the language and mental models of your team is a great idea; **design systems are all about establishing a shared language**, so make sure that language is easy to learn."
+
+**Design lens — composition, not scope creep:** atomic design deliberately stays narrow (how small components combine into bigger ones); it doesn't attempt to also model motion, flows, personas, or A/B testing. Frost's response to pressure to bolt those concerns on: "Design systems are an umbrella that a whole lot of things live under... I think it's a mistake to try to shoehorn all the diverse ingredients & considerations into one crowded place." A system that tries to be the single model for everything stops being a clear model for anything.
+
+**Frontend implication:** the value of a component hierarchy isn't the label at each level — it's that a team of designers and engineers can point at the same UI fragment and agree on what it's called and what depends on what. If two teams disagree on where the line between a "molecule" and an "organism" sits, that's a naming argument, not a design defect; if they disagree on what depends on what, that's a real architecture problem.
+
+Source: [Extending Atomic Design](https://bradfrost.com/blog/post/extending-atomic-design/), Brad Frost, 2019; *Atomic Design* (book), Brad Frost.
+
+---
+
 ## The 8 审查 Questions (Synthesis)
 
 When examining any piece of code, ask:

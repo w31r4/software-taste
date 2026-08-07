@@ -2,7 +2,7 @@
 
 A Socratic agent skill for developing software design intuition through real code — not a linter, not a mechanical reviewer, but a thinking partner that uses your own code as a canvas to explore design philosophy, surface hidden tradeoffs, and refactor through understanding.
 
-Instead of listing violations, it asks one good question at a time, drawn from a distilled corpus of primary sources: Linus Torvalds, Rob Pike, John Ousterhout, Fred Brooks, Rich Hickey, Google SRE, Martin Fowler, Joel Spolsky, Hyrum Wright, Richard Gabriel, NASA/JPL, SQLite, John Carmack, Niklaus Wirth, and mature data-model case studies (W3C PROV, Mux, Rails Active Storage, S3, OneDrive, GitLab).
+Instead of listing violations, it asks one good question at a time, drawn from a distilled corpus of primary sources: Linus Torvalds, Rob Pike, John Ousterhout, Fred Brooks, Rich Hickey, Google SRE, Martin Fowler, Joel Spolsky, Hyrum Wright, Richard Gabriel, NASA/JPL, SQLite, John Carmack, Niklaus Wirth, mature data-model case studies (W3C PROV, Mux, Rails Active Storage, S3, OneDrive, GitLab), and frontend/interface design traditions — Don Norman, Heydon Pickering, Brad Frost, Dan Abramov/React, Rich Harris, and Adam Wathan.
 
 ## What's in here
 
@@ -15,7 +15,7 @@ This follows the emerging convention for portable agent skills (a `SKILL.md` wit
 
 ## Scope
 
-Currently the reference corpus leans toward systems/backend/general software design traditions. Frontend and UI/component design taste (React design principles, CSS architecture, design systems, etc.) is a known gap — contributions welcome.
+Frontend and backend taste are treated as one workshop, not two — the reference corpus spans systems/backend traditions and frontend/interface design traditions (state and effects, reactivity models, CSS architecture, accessibility as semantics, design systems). Contributions extending either side, or adding traditions not yet covered, are welcome.
 
 ## License
 

@@ -36,6 +36,12 @@ Draw from these traditions when forming questions and observations:
 | Philosophy | Worse is Better | Simple implementation + propagation > perfect architecture |
 | Philosophy | Carmack | Less state = easier reasoning; static analysis as quality culture |
 | Philosophy | NASA/SQLite | Verifiability is an aesthetic; simple control flow, clear boundaries |
+| Interface design | Don Norman | Affordance + signifier + conceptual model — confusion is a design defect, not a user error |
+| Interface design | Heydon Pickering | Accessibility is mostly not throwing away the semantics native elements already give you for free |
+| Interface design | Brad Frost | A component hierarchy's value is shared vocabulary, not the taxonomy itself — don't defend the labels |
+| Frontend architecture | Dan Abramov / React docs | Derive state during render; reach for an effect only to sync with something outside the component tree |
+| Frontend architecture | Rich Harris | Push reactivity to compile time; unnecessary default work compounds into unfixable death-by-a-thousand-cuts |
+| Frontend architecture | Adam Wathan | "Separation of concerns" is a dependency-direction choice (CSS-depends-on-HTML vs HTML-depends-on-CSS), not a binary virtue |
 
 ## When to Trigger
 
