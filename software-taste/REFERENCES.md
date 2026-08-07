@@ -565,27 +565,7 @@ Source: [Extending Atomic Design](https://bradfrost.com/blog/post/extending-atom
 
 ---
 
-## 24. Evan You — The Progressive Framework
-
-**Core insight:** a framework spans use cases from "sprinkle interactivity on static HTML" to "full SSR application," and Vue is deliberately designed not to force every user onto the same on-ramp:
-
-> "The web is extremely diverse — the things we build on the web may vary drastically in form and scale. With that in mind, Vue is designed to be flexible and incrementally adoptable."
-
-> "If you are a veteran, you can pick the optimal way to leverage Vue based on the problems you are trying to solve, while retaining the same productivity. This is why we call Vue 'The Progressive Framework': it's a framework that can grow with you and adapt to your needs."
-
-**On offering two mental models without forking the system:** Vue ships both an Options API (object-based, familiar to developers from OOP/class backgrounds) and a Composition API (function-based, better for logic reuse), and is explicit that this is not two competing implementations bolted together:
-
-> "Both API styles are fully capable of covering common use cases. They are different interfaces powered by the exact same underlying system. In fact, the Options API is implemented on top of the Composition API!"
-
-The recommendation to choose one over the other is based on the user's background and the project's complexity (e.g., Options API for progressive enhancement without a build step; Composition API for full applications) — not a claim that one is objectively superior.
-
-**Design lens:** progressive disclosure of complexity is a legitimate API/SDK design goal distinct from "keep it simple" — it means offering more than one valid entry point matched to where different users already stand, while keeping one underlying source of truth so the paths don't diverge into two systems that happen to share a name.
-
-Source: [Vue.js docs — Introduction: The Progressive Framework](https://vuejs.org/guide/introduction.html); Evan You, "Seeking the Balance in Framework Design," JSConf.Asia 2019.
-
----
-
-## 25. Anthony Fu (antfu) — Opinionated Tools and the "All-or-Nothing" Tradeoff
+## 24. Anthony Fu (antfu) — Opinionated Tools and the "All-or-Nothing" Tradeoff
 
 **Core insight:** an opinionated tool buys consistency by removing configuration surface — that's a genuine, positive tradeoff — but the same rigidity becomes a wall the moment one specific case needs to differ, and the tool offers no proportionate way to express that difference.
 
@@ -605,7 +585,7 @@ Source: [Anthony Fu — Why I don't use Prettier](https://antfu.me/posts/why-not
 
 ---
 
-## 26. Eric Evans — Domain-Driven Design (Bounded Context & Ubiquitous Language)
+## 25. Eric Evans — Domain-Driven Design (Bounded Context & Ubiquitous Language)
 
 **Core insight:** large systems rarely fail for lack of a correct model — they fail because everyone assumes there's exactly one model spanning the whole system. Evans's fix is to draw an explicit boundary (a **Bounded Context** — typically a subsystem or a team's area of ownership) inside which one model and one vocabulary are guaranteed to be consistent. Outside that boundary, the same word ("Order," "Account") can and often should mean something different.
 
@@ -629,7 +609,7 @@ Source: Eric Evans, *Domain-Driven Design: Tackling Complexity in the Heart of S
 
 ---
 
-## 27. Martin Kleppmann — System of Record vs. Derived Data
+## 26. Martin Kleppmann — System of Record vs. Derived Data
 
 **Core insight:** explicitly tag every piece of data, per dataset, as either the authoritative fact (system of record) or a rebuildable projection of some other fact (derived data) — and treat losing each of those very differently.
 
@@ -653,7 +633,7 @@ Source: Martin Kleppmann, *Designing Data-Intensive Applications* (O'Reilly, 201
 
 ---
 
-## 28. Michael Stonebraker — "One Size Does Not Fit All"
+## 27. Michael Stonebraker — "One Size Does Not Fit All"
 
 **Core insight:** a general-purpose relational engine is general because it pays specific, nameable overhead on every operation to stay general — and a system willing to give up that generality can shed the overhead and run an order of magnitude faster for its specific workload.
 
@@ -671,7 +651,7 @@ Source: Michael Stonebraker, interview "One Size does not fit all," ODBMS.org / 
 
 ---
 
-## 29. Alex Russell — The Cost of JavaScript / The Performance Inequality Gap
+## 28. Alex Russell — The Cost of JavaScript / The Performance Inequality Gap
 
 **Core insight:** every byte of JavaScript shipped to a browser costs real parse, compile, and execution time — and that cost must be measured against the device and network the actual user population has, not the developer's laptop or a flagship phone.
 
